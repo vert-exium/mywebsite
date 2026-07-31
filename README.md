@@ -1,2 +1,2 @@
-# mywebsite
-My personal website!
+# My Website
+My personal website! Pretty simple idea

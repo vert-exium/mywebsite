@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Francisco #1 // VERTEXIUM</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&family=Share+Tech+Mono&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 3rem 8vw;
+            background-color: #030205; /* Deep obsidian */
+            color: #ffffff;
+            font-family: 'Space Mono', monospace;
+            position: relative;
+            overflow-x: hidden;
+
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(242, 227, 198, 0.05) 0%, transparent 45%);
+        }
+
+        /* Starfield Overlay */
+        #stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: sparkle 2.5s infinite ease-in-out;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Share Tech Mono', monospace;
+            margin-bottom: 2.5rem;
+        }
+
+        .back-link {
+            color: #f2e3c6;
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .back-link:hover {
+            color: #c084fc;
+            text-shadow: 0 0 10px rgba(192, 132, 252, 0.8);
+            transform: translateX(-4px);
+        }
+
+        .page-tag {
+            color: rgba(168, 85, 247, 0.7);
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .content-wrapper {
+            z-index: 2;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2rem, 4.5vw, 3.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+            text-shadow: 
+                0 0 16px rgba(242, 227, 198, 0.25),
+                0 0 32px rgba(168, 85, 247, 0.35);
+        }
+
+        /* Prominent Portfolio Link Banner */
+        .portfolio-banner {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            width: fit-content;
+            text-decoration: none;
+            color: #f2e3c6;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-banner span {
+            color: #c084fc;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .portfolio-banner:hover {
+            background: rgba(168, 85, 247, 0.18);
+            border-color: rgba(242, 227, 198, 0.6);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .portfolio-banner .external-icon {
+            font-size: 1rem;
+            transition: transform 0.25s ease;
+        }
+
+        .portfolio-banner:hover .external-icon {
+            transform: translate(2px, -2px);
+        }
+
+        /* Dense Masonry Photo Wall Layout */
+        .photo-wall {
+            column-count: 4;
+            column-gap: 10px;
+            width: 100%;
+        }
+
+        .photo-item {
+            break-inside: avoid;
+            margin-bottom: 10px;
+            overflow: hidden;
+            border-radius: 4px;
+            background: #0a0612;
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.4s ease, filter 0.3s ease;
+        }
+
+        .photo-item:hover {
+            border-color: rgba(242, 227, 198, 0.5);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+            transform: translateY(-2px);
+            z-index: 3;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Lightbox Fullscreen Viewer */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(3, 2, 5, 0.92);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lightbox-img {
+            max-width: 90vw;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 4px;
+            border: 1px solid rgba(242, 227, 198, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(168, 85, 247, 0.25);
+        }
+
+        .lightbox-info {
+            margin-top: 1rem;
+            font-family: 'Share Tech Mono', monospace;
+            color: #f2e3c6;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        /* Lightbox Navigation Buttons */
+        .lightbox-btn {
+            position: absolute;
+            background: rgba(10, 6, 18, 0.7);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            color: #ffffff;
+            font-size: 1.8rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50%;
+            cursor: pointer;
+            user-select: none;
+            backdrop-filter: blur(6px);
+            transition: all 0.25s ease;
+            z-index: 101;
+        }
+
+        .lightbox-btn:hover {
+            color: #c084fc;
+            border-color: rgba(242, 227, 198, 0.7);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            transform: scale(1.1);
+        }
+
+        .lightbox-prev { left: 2vw; }
+        .lightbox-next { right: 2vw; }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem; right: 2rem;
+            font-size: 1.5rem;
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+        }
+
+        .footer {
+            z-index: 2;
+            margin-top: 5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: rgba(242, 227, 198, 0.4);
+            display: flex;
+            justify-content: flex-end;
+            letter-spacing: 0.15em;
+            border-top: 1px solid rgba(168, 85, 247, 0.15);
+            padding-top: 1.5rem;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.15; transform: scale(0.6); }
+            50% { opacity: 0.95; transform: scale(1.6); box-shadow: 0 0 8px rgba(242, 227, 198, 0.8); }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1100px) { .photo-wall { column-count: 3; } }
+        @media (max-width: 750px)  { 
+            .photo-wall { column-count: 2; }
+            .lightbox-btn { font-size: 1.2rem; padding: 0.5rem 0.8rem; }
+        }
+        @media (max-width: 480px)  { .photo-wall { column-count: 1; } }
+    </style>
+</head>
+<body>
+
+    <!-- Stars Field -->
+    <div id="stars"></div>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="../../index.html" class="back-link">&lt;// back to photography</a>
+        <span class="page-tag">albums // san francisco #1</span>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="header-section">
+            <h1 class="page-title">San Francisco #1</h1>
+            
+            <!-- Hyperlink Banner -->
+            <a href="https://vertexphotos.myportfolio.com" target="_blank" rel="noopener noreferrer" class="portfolio-banner">
+                <span>all albums at vertexphotos.myportfolio.com</span>
+                <span class="external-icon">↗</span>
+            </a>
+        </div>
+
+        <!-- 53 Photo Masonry Wall -->
+        <main class="photo-wall">
+            <div class="photo-item"><img src="IMG_1988.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_1990.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2024.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2028.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2029.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2033.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2037.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2038.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2046.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2049.jpg" alt="San Francisco #1"></div>
+
+            <div class="photo-item"><img src="IMG_2050.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2051.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2052.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2053.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2054.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2058.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2064.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2067.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2073.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2099.jpg" alt="San Francisco #1"></div>
+
+            <div class="photo-item"><img src="IMG_2109.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2118.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2139.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2144.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2151.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2155.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2157.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2159.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2161.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2165.jpg" alt="San Francisco #1"></div>
+
+            <div class="photo-item"><img src="IMG_2167.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2171.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2182.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2186.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2188.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2195.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2205.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2208.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2210.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2221.jpg" alt="San Francisco #1"></div>
+
+            <div class="photo-item"><img src="IMG_2239.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2247.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2251.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2253.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2254.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2255.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2260.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2262.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2263.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2268.jpg" alt="San Francisco #1"></div>
+
+            <div class="photo-item"><img src="IMG_2270.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2282.jpg" alt="San Francisco #1"></div>
+            <div class="photo-item"><img src="IMG_2295.jpg" alt="San Francisco #1"></div>
+        </main>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox-modal">
+        <button class="lightbox-btn lightbox-close" id="lightbox-close">&times;</button>
+        <button class="lightbox-btn lightbox-prev" id="lightbox-prev">&#10094;</button>
+        <button class="lightbox-btn lightbox-next" id="lightbox-next">&#10095;</button>
+        <div class="lightbox-content">
+            <img id="lightbox-img" class="lightbox-img" src="" alt="Expanded View">
+            <div class="lightbox-info">
+                <span id="lightbox-counter">1 / 53</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <span>VERTEXIUM © 2026</span>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Starfield Generator
+        function generateStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() > 0.7 ? 2 : 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                star.style.animationDuration = `${1.5 + Math.random() * 2}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Lightbox Gallery Navigation
+        document.addEventListener("DOMContentLoaded", () => {
+            generateStars();
+
+            const photoElements = document.querySelectorAll('.photo-item img');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxCounter = document.getElementById('lightbox-counter');
+            const btnClose = document.getElementById('lightbox-close');
+            const btnPrev = document.getElementById('lightbox-prev');
+            const btnNext = document.getElementById('lightbox-next');
+
+            let currentIndex = 0;
+
+            function openLightbox(index) {
+                currentIndex = index;
+                lightboxImg.src = photoElements[currentIndex].src;
+                lightboxCounter.textContent = `${currentIndex + 1} / ${photoElements.length}`;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+
+            function showNext() {
+                currentIndex = (currentIndex + 1) % photoElements.length;
+                openLightbox(currentIndex);
+            }
+
+            function showPrev() {
+                currentIndex = (currentIndex - 1 + photoElements.length) % photoElements.length;
+                openLightbox(currentIndex);
+            }
+
+            // Click triggers
+            photoElements.forEach((img, index) => {
+                img.parentElement.addEventListener('click', () => openLightbox(index));
+            });
+
+            btnClose.addEventListener('click', closeLightbox);
+            btnNext.addEventListener('click', showNext);
+            btnPrev.addEventListener('click', showPrev);
+
+            // Close on background click
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+
+            // Keyboard navigation (Esc, Left Arrow, Right Arrow)
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('active')) return;
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') showNext();
+                if (e.key === 'ArrowLeft') showPrev();
+            });
+        });
+    </script>
+
+</body>
+</html>

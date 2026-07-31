@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERTEXIUM</title>
+
+    <!-- Google Fonts: Orbitron (Digital Title), Share Tech Mono (Nav), Space Mono (Footer), VT323 (Typewriter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800;900&family=Share+Tech+Mono&family=Space+Mono:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8vw;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+            background-color: #030205; /* Deep, dark obsidian base */
+
+            /* Dark Obsidian Background with Subtle Deep Violet Ambient Glows */
+            background-image: 
+                radial-gradient(circle at 20% 45%, rgba(126, 34, 206, 0.16) 0%, transparent 50%),
+                radial-gradient(circle at 75% 30%, rgba(242, 227, 198, 0.07) 0%, transparent 45%),
+                radial-gradient(circle at 50% 85%, rgba(88, 28, 135, 0.12) 0%, transparent 55%);
+            background-size: 150% 150%;
+            animation: utopiaGlow 18s ease-in-out infinite alternate;
+        }
+
+        /* Dark Edge Vignette */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 35%, #000000 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Film Grain Texture Overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Starfield Container */
+        #stars {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Enhanced Sparkle Stars */
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: sparkle 2s infinite ease-in-out;
+        }
+
+        /* Left Column Content */
+        .left-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        /* Floating Title Wrapper */
+        .floating-wrapper {
+            width: max-content;
+            animation: float 10s ease-in-out infinite alternate;
+        }
+
+        /* Digital Logo Text */
+        .logo-text {
+            font-size: 5.5vw;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            color: #ffffff;
+            text-transform: uppercase;
+            white-space: nowrap;
+            line-height: 1;
+
+            /* Lighter Tan & Glowing Purple Aura */
+            text-shadow: 
+                0 0 14px rgba(242, 227, 198, 0.45),
+                0 0 32px rgba(168, 85, 247, 0.6),
+                0 0 65px rgba(126, 34, 206, 0.35);
+        }
+
+        /* Subtext Container */
+        .subtext-container {
+            margin-top: 3.5rem;
+            font-family: 'VT323', monospace;
+            font-size: 2.2vw;
+            letter-spacing: 0.1em;
+        }
+
+        /* Typewriter Link */
+        .typewriter-link {
+            color: #f2e3c6;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.25s ease, text-shadow 0.25s ease;
+            text-shadow: 0 0 10px rgba(242, 227, 198, 0.4);
+        }
+
+        .typewriter-link:hover {
+            color: #c084fc;
+            text-shadow: 0 0 15px rgba(192, 132, 252, 0.9);
+        }
+
+        .prompt-symbol {
+            color: #a855f7;
+            margin-right: 0.4rem;
+        }
+
+        /* Blinking Cursor */
+        .cursor {
+            display: inline-block;
+            width: 0.5em;
+            background-color: #f2e3c6;
+            margin-left: 2px;
+            animation: blink 0.8s infinite;
+        }
+
+        .typewriter-link:hover .cursor {
+            background-color: #c084fc;
+        }
+
+        /* Right Side Navigation */
+        .right-nav {
+            font-family: 'Share Tech Mono', monospace;
+            z-index: 2;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 2.2rem;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            text-transform: lowercase;
+            letter-spacing: 0.1em;
+            padding: 0.3rem 1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .nav-item .nav-num {
+            color: #a855f7;
+            font-size: 1.5rem;
+            opacity: 0.85;
+            transition: color 0.3s ease;
+        }
+
+        /* Nav Hover FX */
+        .nav-item a:hover {
+            color: #ffffff;
+            border-left: 3px solid #f2e3c6;
+            background: rgba(242, 227, 198, 0.08);
+            transform: translateX(12px);
+            text-shadow: 0 0 14px rgba(242, 227, 198, 0.8);
+        }
+
+        .nav-item a:hover .nav-num {
+            color: #f2e3c6;
+            opacity: 1;
+        }
+
+        /* San Francisco Coordinates Footer */
+        .sf-footer {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 8vw;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: rgba(242, 227, 198, 0.45);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            z-index: 2;
+        }
+
+        .sf-footer .location-tag {
+            color: #c084fc;
+            font-weight: 700;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translate(0px, 0px) rotate(0deg); }
+            33% { transform: translate(6px, -10px) rotate(0.6deg); }
+            66% { transform: translate(-5px, 6px) rotate(-0.5deg); }
+            100% { transform: translate(4px, -5px) rotate(0.3deg); }
+        }
+
+        @keyframes utopiaGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Intense Star Sparkle Keyframes */
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0.15;
+                transform: scale(0.6);
+                box-shadow: none;
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.8);
+                box-shadow: 
+                    0 0 6px #ffffff,
+                    0 0 12px #f2e3c6,
+                    0 0 18px rgba(192, 132, 252, 0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Stars Container -->
+    <div id="stars"></div>
+
+    <!-- Left Column -->
+    <div class="left-content">
+        <div class="floating-wrapper">
+            <h1 class="logo-text">VERTEXIUM</h1>
+        </div>
+        
+        <div class="subtext-container">
+            <a id="typewriter-link" class="typewriter-link" href="/about">
+                <span class="prompt-symbol">&gt;/</span><span id="typewriter"></span><span class="cursor">&nbsp;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Right Column Nav -->
+    <nav class="right-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="/about"><span class="nav-num">01 //</span> about</a>
+            </li>
+            <li class="nav-item">
+                <a href="/projects"><span class="nav-num">02 //</span> projects</a>
+            </li>
+            <li class="nav-item">
+                <a href="/photography"><span class="nav-num">03 //</span> photography</a>
+            </li>
+            <li class="nav-item">
+                <a href="/music"><span class="nav-num">04 //</span> music</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Bottom Location Footer -->
+    <footer class="sf-footer">
+        <span class="location-tag">SYS.LOC</span> // SAN FRANCISCO, CA [ 37°46'35.3"N 122°25'33.1"W ]
+    </footer>
+
+    <script>
+        // Typewriter Effect
+        const pages = [
+            { text: "about", url: "/about" },
+            { text: "projects", url: "/projects" },
+            { text: "photography", url: "/photography" },
+            { text: "music", url: "/music" }
+        ];
+
+        let pageIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        const typewriterEl = document.getElementById("typewriter");
+        const linkEl = document.getElementById("typewriter-link");
+
+        function typeLoop() {
+            const current = pages[pageIndex];
+            linkEl.href = current.url;
+
+            if (isDeleting) {
+                typewriterEl.textContent = current.text.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typewriterEl.textContent = current.text.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let speed = isDeleting ? 40 : 90;
+
+            if (!isDeleting && charIndex === current.text.length) {
+                speed = 5000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                pageIndex = (pageIndex + 1) % pages.length;
+                speed = 300;
+            }
+
+            setTimeout(typeLoop, speed);
+        }
+
+        // Generate Sparkling Stars
+        function generateStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 85;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Randomize star sizes for realistic depth
+                const size = Math.random() > 0.8 ? 3 : (Math.random() > 0.4 ? 2 : 1);
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                
+                // Randomize sparkle speed and timing
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                star.style.animationDuration = `${1.2 + Math.random() * 2}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            typeLoop();
+            generateStars();
+        });
+    </script>
+
+</body>
+</html>
