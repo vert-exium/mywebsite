@@ -283,6 +283,9 @@
             <li class="nav-item">
                 <a href="music"><span class="nav-num">04 //</span> music</a>
             </li>
+            <li class="nav-item">
+                <a href="production"><span class="nav-num">05 //</span> production</a>
+            </li>
         </ul>
     </nav>
 
@@ -292,12 +295,13 @@
     </footer>
 
     <script>
-        // Typewriter Effect
+        // Typewriter effects
         const pages = [
             { text: "about", url: "about/" },
             { text: "projects", url: "projects/" },
             { text: "photography", url: "photography/" },
-            { text: "music", url: "music/" }
+            { text: "music", url: "music/" },
+            { text: "production", url: "production/" }
         ];
 
         let pageIndex = 0;
@@ -333,7 +337,7 @@
             setTimeout(typeLoop, speed);
         }
 
-        // Generate Sparkling Stars
+        // star script
         function generateStars() {
             const starsContainer = document.getElementById('stars');
             const starCount = 85;
@@ -342,7 +346,7 @@
                 const star = document.createElement('div');
                 star.className = 'star';
                 
-                // Randomize star sizes for realistic depth
+                // Random star sizes
                 const size = Math.random() > 0.8 ? 3 : (Math.random() > 0.4 ? 2 : 1);
                 star.style.width = `${size}px`;
                 star.style.height = `${size}px`;
